@@ -13,14 +13,15 @@ using System.Net.Http;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Xml;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using iTextSharp.xmp.impl;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace UsersList
 {
     public partial class Form1 : Form
     {
         private int _id = 0;
-        private string _jsonFilePath = Application.StartupPath + "\\UsersList\\users.json";
-        
+ 
 
         public Form1()
         {
@@ -28,24 +29,8 @@ namespace UsersList
         }
 
 
-        private void btnAdd_Click(object sender, EventArgs e)
-        {
-           
-        }
-
-        private List<User> LoadUserData()
-        {
-            List<User> userList = new List<User>();
-
-            if (File.Exists(_jsonFilePath))
-            {
-                string jsonData = File.ReadAllText(_jsonFilePath);
-                userList = JsonConvert.DeserializeObject<List<User>>(jsonData);
-            }
-
-            return userList;
-        }
-
+    
+     
 
         private string GetSelectedGender()
         {
@@ -160,5 +145,42 @@ namespace UsersList
         {
 
         }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            var _jsonFilePath = Path.Combine(Application.StartupPath + "UsersList" , "user.json");
+             // Kullanıcıdan verileri al
+            string name = txtBoxName.Text;
+            string surname = txtBoxSurname.Text;
+            string gender = GetSelectedGender();
+            string education = cmbBoxEducation.SelectedItem.ToString();
+            DateTime birthDate = dateTimePicker1.Value;
+
+            // Mevcut JSON dosyasını oku (varsa)
+ 
+            // Yeni veriyi oluştur
+            User newUser = new User
+            {
+                Id = ++_id,
+                Name = name,
+                Surname = surname,
+                Gender = gender,
+                Education = education,
+                BirthDate = birthDate.ToShortDateString(),
+                //Image =
+            };
+
+ 
+            // Listeyi JSON formatına çevir
+            string jsonData = JsonConvert.SerializeObject(newUser);
+
+            // JSON dosyasını güncelle
+            File.WriteAllText(_jsonFilePath, jsonData);
+
+            // Kullanıcıya bilgi göster
+            string message = $" {_jsonFilePath},{name} {surname} kişisi eklendi.\nCinsiyet: {gender}\nEğitim: {education}\nDoğum Tarihi: {birthDate.ToShortDateString()}";
+            MessageBox.Show(message, "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
     }
 }

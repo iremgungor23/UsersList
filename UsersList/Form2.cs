@@ -13,6 +13,8 @@ using System.Linq;
 using iTextSharp.text.pdf;
 using iTextSharp.text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace UsersList
 {
@@ -23,8 +25,15 @@ namespace UsersList
         public Form2()
         {
             InitializeComponent();
-            
+
         }
+
+        public DataGridView DataGridViewFromForm2
+        {
+            get { return dataGridView1; }
+        }
+
+
 
         private void btnExport_Click(object sender, EventArgs e)
         {
@@ -75,31 +84,67 @@ namespace UsersList
 
         private void Form2_Load(object sender, EventArgs e)
         {
-            //bu kısımda user.json oku ve dgv'w yazdır
-            string jsonFilePath = Application.StartupPath + "\\UsersList\\users.json";
+            LoadUserFromJson();
 
 
-            List<User> users = new List<User>();
-            if (!File.Exists(jsonFilePath))
-            {
-                string jsonContent = File.ReadAllText(jsonFilePath);
 
-                users = JsonConvert.DeserializeObject<List<User>>(jsonContent);
-            }
-
-            dataGridView1.DataSource = users;
         }
 
 
+
+        private void LoadUserFromJson()
+        {
+            string userListFilePath = Path.Combine(Application.StartupPath, "UserSList", "users.json");
+            dataGridView1.Rows.Clear();
+            if (File.Exists(userListFilePath))
+            {
+                string userListJson = File.ReadAllText(userListFilePath);
+                JArray userListArray = JArray.Parse(userListJson);
+
+                foreach (var user in userListArray)
+                {
+                    string id = user["Id"].ToString();
+                    string name = user["Name"].ToString();
+                    string surname = user["Surname"].ToString();
+                    string gender = user["Gender"].ToString();
+                    string education = user["Education"].ToString();
+                    string birthDate = user["birthDate"].ToString();
+                    string imageid = user["imageid"].ToString();
+
+                    if (!string.IsNullOrEmpty(id))
+                    {
+                        User newProduct = new User
+                        {
+                            Id = id,
+                            Name = Name,
+                            Surname = surname,
+                            Gender = gender,
+                            BirthDate = birthDate,
+                            Education = education,
+                            SvgFilename = imageid
+                        };
+                        DataGridViewRow row = new DataGridViewRow();
+                        row.CreateCells(dataGridView1, id, name, surname, gender, education, imageid);
+                        dataGridView1.Rows.Add(row);
+
+                    }
+                }
+            }
+        }
         public class User
         {
-            public int Id { get; set; }
+
+            public string Id { get; set; }
             public string Name { get; set; }
             public string Surname { get; set; }
             public string Gender { get; set; }
             public string Education { get; set; }
+            public string SvgFilename { get; set; }
             public string BirthDate { get; set; }
+
         }
+
+
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {

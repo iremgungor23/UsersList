@@ -31,7 +31,7 @@
             txtBoxName = new TextBox();
             txtBoxSurname = new TextBox();
             lblName = new Label();
-            lblSurname = new Label();
+            Surname = new Label();
             rdBtnFemale = new RadioButton();
             rdBtnMale = new RadioButton();
             cmbBoxEducation = new ComboBox();
@@ -69,15 +69,15 @@
             lblName.TabIndex = 2;
             lblName.Text = "AD";
             // 
-            // lblSurname
+            // Surname
             // 
-            lblSurname.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            lblSurname.AutoSize = true;
-            lblSurname.Location = new Point(42, 106);
-            lblSurname.Name = "lblSurname";
-            lblSurname.Size = new Size(70, 25);
-            lblSurname.TabIndex = 3;
-            lblSurname.Text = "SOYAD";
+            Surname.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            Surname.AutoSize = true;
+            Surname.Location = new Point(42, 106);
+            Surname.Name = "Surname";
+            Surname.Size = new Size(70, 25);
+            Surname.TabIndex = 3;
+            Surname.Text = "SOYAD";
             // 
             // rdBtnFemale
             // 
@@ -177,7 +177,7 @@
             Controls.Add(cmbBoxEducation);
             Controls.Add(rdBtnMale);
             Controls.Add(rdBtnFemale);
-            Controls.Add(lblSurname);
+            Controls.Add(Surname);
             Controls.Add(lblName);
             Controls.Add(txtBoxSurname);
             Controls.Add(txtBoxName);
@@ -195,7 +195,7 @@
         private TextBox txtBoxName;
         private TextBox txtBoxSurname;
         private Label lblName;
-        private Label lblSurname;
+        private Label Surname;
         private RadioButton rdBtnFemale;
         private RadioButton rdBtnMale;
         private ComboBox cmbBoxEducation;

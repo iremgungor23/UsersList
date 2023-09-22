@@ -49,7 +49,7 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 62;
             dataGridView1.RowTemplate.Height = 33;
-            dataGridView1.Size = new Size(1152, 281);
+            dataGridView1.Size = new Size(1179, 281);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
@@ -107,7 +107,7 @@
             // btnExport
             // 
             btnExport.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnExport.Location = new Point(942, 383);
+            btnExport.Location = new Point(969, 383);
             btnExport.Name = "btnExport";
             btnExport.Size = new Size(187, 34);
             btnExport.TabIndex = 1;
@@ -119,7 +119,7 @@
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1199, 476);
+            ClientSize = new Size(1226, 476);
             Controls.Add(btnExport);
             Controls.Add(dataGridView1);
             Name = "Form2";
