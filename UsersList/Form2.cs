@@ -47,7 +47,6 @@ namespace UsersList
                 foreach (DataGridViewColumn sutun in dataGridView1.Columns)
                 {
                     PdfPCell pdfHucresi = new PdfPCell(new Phrase(sutun.HeaderText));
-                    //pdfHucresi.BackgroundColor = Color.AliceBlue;
                     pdfTablosu.AddCell(pdfHucresi);
                 }
                 foreach (DataGridViewRow satir in dataGridView1.Rows)
@@ -82,7 +81,7 @@ namespace UsersList
             }
         }
 
-        private void Form2_Load(object sender, EventArgs e)
+        private void Form_Load(object sender, EventArgs e)
         {
             LoadUserFromJson();
 
@@ -94,7 +93,7 @@ namespace UsersList
 
         private void LoadUserFromJson()
         {
-            string userListFilePath = Path.Combine(Application.StartupPath, "UserSList", "users.json");
+            string userListFilePath = Path.Combine(Application.StartupPath, "UsersList", "users.json");
             dataGridView1.Rows.Clear();
             if (File.Exists(userListFilePath))
             {
@@ -108,8 +107,8 @@ namespace UsersList
                     string surname = user["Surname"].ToString();
                     string gender = user["Gender"].ToString();
                     string education = user["Education"].ToString();
-                    string birthDate = user["birthDate"].ToString();
-                    string imageid = user["imageid"].ToString();
+                    string birthDate = user["BirthDate"].ToString();
+                    string imageid = user["UserPicture"].ToString();
 
                     if (!string.IsNullOrEmpty(id))
                     {
@@ -121,16 +120,18 @@ namespace UsersList
                             Gender = gender,
                             BirthDate = birthDate,
                             Education = education,
-                            SvgFilename = imageid
+                            UserPicture = imageid
                         };
                         DataGridViewRow row = new DataGridViewRow();
-                        row.CreateCells(dataGridView1, id, name, surname, gender, education, imageid);
+                        row.CreateCells(dataGridView1, id, name, surname, gender, education, birthDate, imageid);
                         dataGridView1.Rows.Add(row);
 
                     }
                 }
             }
         }
+
+
         public class User
         {
 
@@ -141,18 +142,11 @@ namespace UsersList
             public string Education { get; set; }
             public string SvgFilename { get; set; }
             public string BirthDate { get; set; }
+            public string UserPicture { get; set; }
 
         }
+      
 
-
-
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
     }
 
 }
-
-
-

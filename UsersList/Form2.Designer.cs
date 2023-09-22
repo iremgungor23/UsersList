@@ -51,7 +51,6 @@
             dataGridView1.RowTemplate.Height = 33;
             dataGridView1.Size = new Size(1179, 281);
             dataGridView1.TabIndex = 0;
-            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // clmnorder
             // 
@@ -125,7 +124,7 @@
             Name = "Form2";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Form2";
-            Load += Form2_Load;
+            Load += Form_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
