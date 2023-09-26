@@ -1,5 +1,6 @@
 namespace UsersList
 {
+    
     internal static class Program
     {
         /// <summary>

@@ -45,11 +45,11 @@
             dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { clmnorder, clmnName, clmnSurname, clmnGender, clmnEducation, cmlnBirthDate, clmnImage });
-            dataGridView1.Location = new Point(35, 43);
+            dataGridView1.Location = new Point(12, 25);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 62;
             dataGridView1.RowTemplate.Height = 33;
-            dataGridView1.Size = new Size(1179, 281);
+            dataGridView1.Size = new Size(1202, 352);
             dataGridView1.TabIndex = 0;
             // 
             // clmnorder

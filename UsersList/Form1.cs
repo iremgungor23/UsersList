@@ -19,83 +19,98 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
+using iTextSharp.text.log;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
+using Serilog;
 
 namespace UsersList
 {
+
     public partial class Form1 : Form
     {
         private int _id = 0;
         private string _selectedImageFileName;
-
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public Form1()
         {
             InitializeComponent();
+
         }
-
-
-
 
 
         private string GetSelectedGender()
         {
+            
             if (rdBtnFemale.Checked)
             {
                 return "Erkek";
             }
             else if (rdBtnMale.Checked)
             {
-                return "Kad?n";
+                return "Kadın";
             }
             else
             {
-                return "Belirtilmemi?";
+                return "Belirtilmemiş"; 
+                
             }
         }
-
-
-
-
 
 
         private void DrawImageToSvg(string imagePath, string svgPath)
         {
-            Bitmap bitmap = new Bitmap(imagePath);
+            
 
-            XmlDocument svgDocument = new XmlDocument();
-            XmlDeclaration xmlDeclaration = svgDocument.CreateXmlDeclaration("1.0", "UTF-8", null);
-            svgDocument.AppendChild(xmlDeclaration);
-
-            XmlElement svgElement = svgDocument.CreateElement("svg");
-            svgElement.SetAttribute("xmlns", "http://www.w3.org/2000/svg");
-            svgElement.SetAttribute("width", bitmap.Width.ToString());
-            svgElement.SetAttribute("height", bitmap.Height.ToString());
-            svgDocument.AppendChild(svgElement);
-
-            using (MemoryStream memoryStream = new MemoryStream())
+            try
             {
-                bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-                byte[] imageBytes = memoryStream.ToArray();
+                Bitmap bitmap = new Bitmap(imagePath);
 
-                string base64Image = Convert.ToBase64String(imageBytes);
-                XmlElement imageElement = svgDocument.CreateElement("image");
-                imageElement.SetAttribute("width", bitmap.Width.ToString());
-                imageElement.SetAttribute("height", bitmap.Height.ToString());
-                imageElement.SetAttribute("xlink:href", "data:image/png;base64," + base64Image);
-                svgElement.AppendChild(imageElement);
+                XmlDocument svgDocument = new XmlDocument();
+                XmlDeclaration xmlDeclaration = svgDocument.CreateXmlDeclaration("1.0", "UTF-8", null);
+                svgDocument.AppendChild(xmlDeclaration);
+
+                XmlElement svgElement = svgDocument.CreateElement("svg");
+                svgElement.SetAttribute("xmlns", "http://www.w3.org/2000/svg");
+                svgElement.SetAttribute("width", bitmap.Width.ToString());
+                svgElement.SetAttribute("height", bitmap.Height.ToString());
+                svgDocument.AppendChild(svgElement);
+
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                    byte[] imageBytes = memoryStream.ToArray();
+
+                    string base64Image = Convert.ToBase64String(imageBytes);
+                    XmlElement imageElement = svgDocument.CreateElement("image");
+                    imageElement.SetAttribute("width", bitmap.Width.ToString());
+                    imageElement.SetAttribute("height", bitmap.Height.ToString());
+                    imageElement.SetAttribute("xlink:href", "data:image/png;base64," + base64Image);
+                    svgElement.AppendChild(imageElement);
+                    _logger.Info("Resim dönüştürüldü");
+
+                }
+
+                svgDocument.Save(svgPath);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Resim dönüştürülürken hata oluştu: " + ex.Message);
+                MessageBox.Show("Hata! ");
+#if DEBUG
+                MessageBox.Show("Geliştirici hataları! ");
 
-            svgDocument.Save(svgPath);
+#endif
+            }
         }
-
-
 
 
         private void btnUserList_Click(object sender, EventArgs e)
         {
             Form2 form2 = new Form2();
             form2.ShowDialog();
-
         }
 
 
@@ -114,11 +129,23 @@ namespace UsersList
         {
             List<User> users = new List<User>();
 
-            if (File.Exists(filePath))
+            try
             {
-                string jsonData = File.ReadAllText(filePath);
+                if (File.Exists(filePath))
+                {
+                    string jsonData = File.ReadAllText(filePath);
 
-                users = JsonConvert.DeserializeObject<List<User>>(jsonData);
+                    users = JsonConvert.DeserializeObject<List<User>>(jsonData);
+                }
+                else
+                {
+                    Console.WriteLine("Belirtilen JSON dosyası bulunamadı.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata! ");
+                _logger.Error("JSON dosyasından kullanıcıları yüklerken bir hata oluştu: " + ex.Message);
             }
 
             return users;
@@ -126,8 +153,16 @@ namespace UsersList
 
         private void SaveUsersToJson(string filePath, List<User> users)
         {
-            string jsonData = JsonConvert.SerializeObject(users);
-            File.WriteAllText(filePath, jsonData);
+            try
+            {
+                string jsonData = JsonConvert.SerializeObject(users);
+                File.WriteAllText(filePath, jsonData);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata! ");
+                _logger.Error("Kullanıcıları JSON dosyasına kaydederken bir hata oluştu: " + ex.Message);
+            }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -143,6 +178,10 @@ namespace UsersList
             if (!Directory.Exists(Path.GetDirectoryName(_jsonFilePath)))
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(_jsonFilePath));
+            }
+            else
+            {
+                Console.WriteLine("Klasör zaten mevcut.");
             }
 
             List<User> users = LoadUsersFromJson(_jsonFilePath);
@@ -196,7 +235,13 @@ namespace UsersList
 
                 pctrBoxImages.Image = Image.FromFile(filePath);
             }
+            else
+            {
+                MessageBox.Show("Dosya seçme işlemi iptal edildi veya dosya seçilmedi. ");
+                _logger.Error("Dosya seçme işlemi iptal edildi veya dosya seçilmedi. ");
+            }
         }
-
+        
     }
+    
 }

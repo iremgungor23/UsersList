@@ -15,12 +15,14 @@ using iTextSharp.text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Asn1.X509;
+using NLog;
 
 namespace UsersList
 {
     public partial class Form2 : Form
     {
         private object _userList;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Form2()
         {
@@ -28,15 +30,18 @@ namespace UsersList
 
         }
 
+
         public DataGridView DataGridViewFromForm2
         {
             get { return dataGridView1; }
         }
 
 
-
         private void btnExport_Click(object sender, EventArgs e)
         {
+
+            Logger.Info("Veriler dışarı aktarılıyor");
+
             try
             {
                 PdfPTable pdfTablosu = new PdfPTable(dataGridView1.ColumnCount);
@@ -72,12 +77,18 @@ namespace UsersList
                         pdfDoc.Close();
                         stream.Close();
                         MessageBox.Show("PDF dosyası başarıyla oluşturuldu!\n" + "Dosya Konumu: " + dosyakaydet.FileName, "İşlem Tamam");
+
+                        Logger.Info("Veriler dışarı aktarıldı");
+
                     }
                 }
             }
-            catch (Exception hata)
+            catch (Exception ex)
             {
-                MessageBox.Show(hata.Message);
+                MessageBox.Show(ex.Message);
+
+
+                Logger.Info("Veriler dışarı aktarılamadı");
             }
         }
 
@@ -85,14 +96,13 @@ namespace UsersList
         {
             LoadUserFromJson();
 
-
-
         }
-
 
 
         private void LoadUserFromJson()
         {
+
+
             string userListFilePath = Path.Combine(Application.StartupPath, "UsersList", "users.json");
             dataGridView1.Rows.Clear();
             if (File.Exists(userListFilePath))
@@ -125,9 +135,14 @@ namespace UsersList
                         DataGridViewRow row = new DataGridViewRow();
                         row.CreateCells(dataGridView1, id, name, surname, gender, education, birthDate, imageid);
                         dataGridView1.Rows.Add(row);
-
+                        Logger.Info("Kullanıcı verileri bulundu.");
                     }
                 }
+            }
+            else
+            {
+                MessageBox.Show("Kullanıcı verileri bulunamadı veya dosya boş.");
+                Logger.Error("Kullanıcı verileri bulunamadı veya dosya boş.");
             }
         }
 
@@ -145,8 +160,5 @@ namespace UsersList
             public string UserPicture { get; set; }
 
         }
-      
-
     }
-
 }
